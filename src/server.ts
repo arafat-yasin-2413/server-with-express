@@ -64,7 +64,7 @@ app.get("/", logger, (req: Request, res: Response) => {
 });
 
 // "users" CRUD Ops
-app.post("/users", async (req: Request, res: Response) => {
+app.post("/users",logger, async (req: Request, res: Response) => {
 	const { name, email } = req.body;
 	// console.log(req.body);
 
