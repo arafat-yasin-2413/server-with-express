@@ -101,6 +101,7 @@ app.get("/users", async(req: Request, res:Response) => {
     }
 })
 
+// getting specific user
 app.get("/users/:id", async(req:Request, res: Response) =>{
     // console.log(req.params.id)
 
@@ -120,6 +121,39 @@ app.get("/users/:id", async(req:Request, res: Response) =>{
             res.status(200).json({
                 success: true,
                 message: "User fetched Successfully",
+                data: result.rows[0],
+            })
+        }
+    }
+    catch(err:any){
+        res.status(500).json({
+            success: false,
+            message: err.message,
+            details: err,
+        })
+    }
+})
+
+
+app.put("/users/:id", async(req:Request, res: Response) =>{
+    // console.log(req.params.id)
+    const {name, email} = req.body;
+
+    try{
+        const result = await pool.query(`
+            UPDATE users SET name=$1, email=$2 WHERE id=$3 RETURNING *
+            `,[name,email,req.params.id]);
+
+        if(result.rows.length === 0 ) {
+            res.status(404).json({
+                success:false,
+                message: "User Not Found",
+            })
+        }
+        else{
+            res.status(200).json({
+                success: true,
+                message: "User updated Successfully",
                 data: result.rows[0],
             })
         }
